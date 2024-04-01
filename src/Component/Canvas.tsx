@@ -2,17 +2,15 @@ import { Box, Button } from "@mui/material"
 import { useRef, useState } from "react"
 
 
-export const Canvas = (props: { strokeStyle?: string, lineJoin?: string, lineWidth?: string }) => {
-    const { strokeStyle, lineJoin, lineWidth } = props
+export const Canvas = (props: { strokeStyle?: string, lineWidth?: number }) => {
+    const { strokeStyle, lineWidth } = props
     const [isDrawing, setIsDrawing] = useState(false)
-    const [enableDownload, setEnableDownload] = useState(false)
     const [lastX, setLastX] = useState(0)
     const [lastY, setLastY] = useState(0)
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
     const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
         setIsDrawing(true)
-        setEnableDownload(true)
         setLastX(event.nativeEvent.offsetX)
         setLastY(event.nativeEvent.offsetY)
     }
@@ -23,10 +21,10 @@ export const Canvas = (props: { strokeStyle?: string, lineJoin?: string, lineWid
         if (!canvas) return
         const context = canvas.getContext('2d')
         if (!context) return
-        context.strokeStyle = "#OOO"
+        context.strokeStyle = strokeStyle || "#000000"
         context.lineJoin = "round"
         context.lineCap = "round"
-        context.lineWidth = 3
+        context.lineWidth = lineWidth || 3
 
         context.beginPath()
         context.moveTo(lastX, lastY)
@@ -74,14 +72,14 @@ export const Canvas = (props: { strokeStyle?: string, lineJoin?: string, lineWid
             onMouseOut={handleMouseOut}
             height={300}
             width={600}
-            style={{ border: "3px  solid #F3EEEA", borderRadius: 5, boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
+            style={{ border: "3px  solid #89e6da", borderRadius: 5, boxShadow: "0 4px 8px 0 #89e6da, 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
         </canvas>
-        <Box display={"flex"} flexDirection={"row-reverse"} gap={2}>
-            <Button onClick={handleClear} disabled={!lastX || !lastY} variant="outlined">
-                Clear
-            </Button>
-            <Button onClick={handleDownload} disabled={!lastX || !lastY} variant="contained">
+        <Box display={"flex"} flexDirection={"row"} gap={2}>
+            <Button sx={{ backgroundColor: "#89e6da" }} onClick={handleDownload} disabled={!lastX || !lastY} variant="contained" >
                 Download
+            </Button>
+            <Button sx={{ background: "#89e6da" }} onClick={handleClear} disabled={!lastX || !lastY} variant="contained">
+                Clear
             </Button>
         </Box>
     </Box>
