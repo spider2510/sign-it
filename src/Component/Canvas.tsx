@@ -1,47 +1,47 @@
 import { Box, Button } from "@mui/material"
-import { useRef, useState } from "react"
+import { useRef } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { canvasToolsActions } from "../redux/slices/tools"
+import { RootState } from "../redux/store"
 
-
-export const Canvas = (props: { strokeStyle?: string, lineWidth?: number }) => {
-    const { strokeStyle, lineWidth } = props
-    const [isDrawing, setIsDrawing] = useState(false)
-    const [lastX, setLastX] = useState(0)
-    const [lastY, setLastY] = useState(0)
+export const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
+    const dispatch = useDispatch()
+    const canvasTools = useSelector((state: RootState) => state.canvasTools)
 
     const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-        setIsDrawing(true)
-        setLastX(event.nativeEvent.offsetX)
-        setLastY(event.nativeEvent.offsetY)
+        dispatch(canvasToolsActions.setIsDrawing(true))
+        dispatch(canvasToolsActions.setLastX(event.nativeEvent.offsetX))
+        dispatch(canvasToolsActions.setLastY(event.nativeEvent.offsetY))
     }
 
     const handleMouseMove = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-        if (!isDrawing || !canvasRef) return
+        if (!canvasTools.isDrawing || !canvasRef) return
         const canvas = canvasRef.current
         if (!canvas) return
         const context = canvas.getContext('2d')
         if (!context) return
-        context.strokeStyle = strokeStyle || "#000000"
+        context.strokeStyle = canvasTools.strokeStyle || "#000000"
         context.lineJoin = "round"
         context.lineCap = "round"
-        context.lineWidth = lineWidth || 3
+        context.lineWidth = canvasTools.lineWidth || 3
 
         context.beginPath()
-        context.moveTo(lastX, lastY)
+        context.moveTo(canvasTools.lastX, canvasTools.lastY)
         context.lineTo(event.nativeEvent.offsetX, event.nativeEvent.offsetY)
 
         context.stroke()
-        setLastX(event.nativeEvent.offsetX)
-        setLastY(event.nativeEvent.offsetY)
+        dispatch(canvasToolsActions.setLastX(event.nativeEvent.offsetX))
+        dispatch(canvasToolsActions.setLastY(event.nativeEvent.offsetY))
     }
 
     const handleMouseUp = (_event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-        setIsDrawing(false)
+        dispatch(canvasToolsActions.setIsDrawing(false))
     }
 
 
     const handleMouseOut = (_event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-        setIsDrawing(false)
+        dispatch(canvasToolsActions.setIsDrawing(false))
     }
 
     const handleClear = () => {
@@ -75,10 +75,10 @@ export const Canvas = (props: { strokeStyle?: string, lineWidth?: number }) => {
             style={{ border: "3px  solid #89e6da", borderRadius: 5, boxShadow: "0 4px 8px 0 #89e6da, 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
         </canvas>
         <Box display={"flex"} flexDirection={"row"} gap={2}>
-            <Button sx={{ backgroundColor: "#89e6da" }} onClick={handleDownload} disabled={!lastX || !lastY} variant="contained" >
+            <Button sx={{ backgroundColor: "#89e6da" }} onClick={handleDownload} disabled={!canvasTools.lastX || !canvasTools.lastY} variant="contained" >
                 Download
             </Button>
-            <Button sx={{ background: "#89e6da" }} onClick={handleClear} disabled={!lastX || !lastY} variant="contained">
+            <Button sx={{ background: "#89e6da" }} onClick={handleClear} disabled={!canvasTools.lastX || !canvasTools.lastY} variant="contained">
                 Clear
             </Button>
         </Box>

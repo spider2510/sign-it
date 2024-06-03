@@ -1,21 +1,25 @@
 import { Box, Select, MenuItem } from "@mui/material"
 import { MuiColorInput } from 'mui-color-input'
+import { useDispatch, useSelector } from "react-redux"
+import { canvasToolsActions } from "../redux/slices/tools"
+import { RootState } from "../redux/store"
 
-export const Tools = (props: { setStorkeStyle: React.Dispatch<any>, strokeStyle: any, lineWidth: number, setLineWidth: React.Dispatch<React.SetStateAction<number>> }) => {
-    const { strokeStyle, setStorkeStyle, lineWidth, setLineWidth } = props
+export const Tools = () => {
+    const dispatch = useDispatch()
+    const canvasTools = useSelector((state: RootState) => state.canvasTools)
     const handleColorChange = (newValue: any) => {
-        setStorkeStyle(newValue)
+        dispatch(canvasToolsActions.setStorkeStyle(newValue))
     }
     const handleWidthChange = (event: any) => {
-        setLineWidth(event.target.value)
+        dispatch(canvasToolsActions.setLineWidth(event.target.value))
     }
 
     return <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} gap={2}>
-        <MuiColorInput size="small" format="hex" value={strokeStyle || "#000000"} onChange={handleColorChange} />
+        <MuiColorInput size="small" format="hex" value={canvasTools.strokeStyle || "#000000"} onChange={handleColorChange} />
         <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={lineWidth}
+            value={canvasTools.lineWidth}
             label="Line Width"
             onChange={handleWidthChange}
             size="small"
