@@ -1,10 +1,11 @@
-import { Box, Button } from "@mui/material"
-import { useRef } from "react"
+import { Box, Button, Typography } from "@mui/material"
+import { useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { canvasToolsActions } from "../redux/slices/tools"
 import { RootState } from "../redux/store"
 
 export const Canvas = () => {
+    const [isClear, setIsClear] = useState(true)
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const dispatch = useDispatch()
     const canvasTools = useSelector((state: RootState) => state.canvasTools)
@@ -33,6 +34,7 @@ export const Canvas = () => {
         context.stroke()
         dispatch(canvasToolsActions.setLastX(event.nativeEvent.offsetX))
         dispatch(canvasToolsActions.setLastY(event.nativeEvent.offsetY))
+        setIsClear(false)
     }
 
     const handleMouseUp = (_event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
@@ -50,6 +52,7 @@ export const Canvas = () => {
         const context = canvas.getContext('2d')
         if (!context) return
         context.clearRect(0, 0, canvas.width, canvas.height)
+        setIsClear(true)
     }
 
     const handleDownload = () => {
@@ -75,11 +78,11 @@ export const Canvas = () => {
             style={{ border: "3px  solid #89e6da", borderRadius: 5, boxShadow: "0 4px 8px 0 #89e6da, 0 6px 20px 0 rgba(0, 0, 0, 0.19)" }}>
         </canvas>
         <Box display={"flex"} flexDirection={"row"} gap={2}>
-            <Button sx={{ backgroundColor: "#89e6da" }} onClick={handleDownload} disabled={!canvasTools.lastX || !canvasTools.lastY} variant="contained" >
-                Download
+            <Button sx={{ backgroundColor: "#5AB2FF" }} onClick={handleDownload} disabled={!canvasTools.lastX || !canvasTools.lastY || isClear} variant="contained" >
+                <Typography variant="subtitle2">Download</Typography>
             </Button>
-            <Button sx={{ background: "#89e6da" }} onClick={handleClear} disabled={!canvasTools.lastX || !canvasTools.lastY} variant="contained">
-                Clear
+            <Button sx={{ background: "#5AB2FF" }} onClick={handleClear} disabled={!canvasTools.lastX || !canvasTools.lastY || isClear} variant="contained">
+                <Typography fontWeight={"strong"} variant="subtitle2">Clear</Typography>
             </Button>
         </Box>
     </Box>
