@@ -8,7 +8,7 @@ export const Canvas = () => {
     const [isClear, setIsClear] = useState(true)
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const dispatch = useDispatch()
-    const canvasTools = useSelector((state: RootState) => state.canvasTools)
+    const canvasTools: any = useSelector((state: RootState) => state.canvasTools)
 
     const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
         dispatch(canvasToolsActions.setIsDrawing(true))
